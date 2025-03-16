@@ -2,125 +2,125 @@
   <v-container>
     <v-row>
       <v-col cols="12">
-        <h1 class="text-h3 my-4">Sepet</h1>
+        <h1 class="text-h3 my-6 font-weight-light text-center text-md-start">Sepetim</h1>
       </v-col>
     </v-row>
 
     <v-row v-if="loading">
-      <v-col cols="12" class="text-center">
-        <v-progress-circular indeterminate color="primary"></v-progress-circular>
+      <v-col cols="12" class="d-flex justify-center align-center py-12">
+        <v-progress-circular indeterminate color="primary" size="60" width="6"></v-progress-circular>
       </v-col>
     </v-row>
 
     <v-row v-else>
       <v-col cols="12" md="8">
-        <v-card class="mb-4">
-          <v-card-title class="text-subtitle-1 py-3">
+        <v-card class="mb-4 rounded-xl elevation-3 border" variant="elevated">
+          <v-card-title class="text-subtitle-1 py-4 px-6 bg-grey-lighten-4 rounded-t-xl">
             <div class="d-flex justify-space-between">
-              <div>Ürün</div>
-              <div>Toplam</div>
+              <div class="font-weight-medium">Ürün</div>
+              <div class="font-weight-medium">Toplam</div>
             </div>
           </v-card-title>
-          <v-divider></v-divider>
 
-          <v-card-text class="py-4" v-if="cartItems.length === 0">
-            <p class="text-center">Sepetinizde ürün bulunmamaktadır.</p>
+          <v-card-text class="py-6 px-6" v-if="cartItems.length === 0">
+            <div class="d-flex flex-column align-center py-8">
+              <v-icon icon="mdi-cart-outline" size="64" color="grey-lighten-2" class="mb-4"></v-icon>
+              <p class="text-body-1 text-medium-emphasis">Sepetinizde ürün bulunmamaktadır.</p>
+            </div>
           </v-card-text>
 
-          <v-card-text class="py-4" v-else>
-            <div 
-              v-for="(item, index) in cartItems" 
-              :key="item.id"
-              class="d-flex align-center"
-              :class="{ 'mb-6': index < cartItems.length - 1 }"
-            >
-              <v-img
-                :src="`https://picsum.photos/id/${100 + index}/100/100`"
-                height="80"
-                width="80"
-                class="rounded me-4"
-              ></v-img>
-              <div class="flex-grow-1">
-                <div class="text-h6">{{ item.name }}</div>
-                <div class="text-body-2">₺{{ item.price }}</div>
-                <div class="text-body-2">Stok: {{ item.stock }}</div>
-                <div class="d-flex align-center mt-2">
+          <v-card-text class="py-6 px-6" v-else>
+            <div v-for="(item, index) in cartItems" :key="item.id">
+              <div class="d-flex flex-column flex-md-row align-md-center rounded-lg hover-elevation transition-all">
+                <div class="product-image-container d-flex justify-center justify-md-start mb-3 mb-md-0">
+                  <div class="img-square-wrapper">
+                    <v-img
+                      src="/product.png"
+                      width="90"
+                      aspect-ratio="1"
+                      class="rounded-lg bg-grey-lighten-4 object-cover border"
+                      cover
+                    ></v-img>
+                  </div>
+                </div>
+                <div class="flex-grow-1 px-md-4">
+                  <div class="text-h6 font-weight-medium mb-1 text-center text-md-start">{{ item.name }}</div>
+                  <div class="text-subtitle-1 text-primary font-weight-medium mb-1 text-center text-md-start">₺{{ item.price }}</div>
+                  <div class="text-caption text-medium-emphasis text-center text-md-start">Stok: {{ item.stock }}</div>
+                  <div class="d-flex align-center justify-center justify-md-start mt-3">
+                    <v-btn 
+                      icon 
+                      size="small" 
+                      variant="outlined" 
+                      color="grey-darken-1"
+                      density="comfortable"
+                      @click="decreaseQuantity(item)"
+                      :disabled="item.quantity <= 1"
+                      class="quantity-btn"
+                    >
+                      <v-icon>mdi-minus</v-icon>
+                    </v-btn>
+                    <span class="mx-4 text-subtitle-2 font-weight-medium">{{ item.quantity }}</span>
+                    <v-btn 
+                      icon 
+                      size="small" 
+                      variant="outlined" 
+                      color="grey-darken-1"
+                      density="comfortable"
+                      @click="increaseQuantity(item)"
+                      :disabled="item.quantity >= item.stock"
+                      class="quantity-btn"
+                    >
+                      <v-icon>mdi-plus</v-icon>
+                    </v-btn>
+                  </div>
+                </div>
+                <div class="text-right d-flex flex-column align-center align-md-end mt-3 mt-md-0">
+                  <div class="text-h6 font-weight-bold">₺{{ calculateItemTotal(item).toFixed(2) }}</div>
                   <v-btn 
-                    icon 
-                    size="small" 
                     variant="text" 
-                    density="comfortable"
-                    @click="decreaseQuantity(item)"
-                    :disabled="item.quantity <= 1"
+                    density="comfortable" 
+                    color="error" 
+                    class="mt-2 px-2"
+                    @click="removeItem(item)"
+                    size="small"
                   >
-                    <v-icon>mdi-minus</v-icon>
-                  </v-btn>
-                  <span class="mx-2">{{ item.quantity }}</span>
-                  <v-btn 
-                    icon 
-                    size="small" 
-                    variant="text" 
-                    density="comfortable"
-                    @click="increaseQuantity(item)"
-                    :disabled="item.quantity >= item.stock"
-                  >
-                    <v-icon>mdi-plus</v-icon>
+                    <v-icon size="small" class="me-1">mdi-delete</v-icon>
+                    Kaldır
                   </v-btn>
                 </div>
-                <v-btn 
-                  variant="text" 
-                  density="comfortable" 
-                  color="error" 
-                  class="px-0 mt-2"
-                  @click="removeItem(item)"
-                >
-                  <v-icon size="small" class="me-1">mdi-delete</v-icon>
-                  Ürünü Kaldır
-                </v-btn>
               </div>
-              <div class="text-right">
-                <div class="text-h6">₺{{ calculateItemTotal(item).toFixed(2) }}</div>
-              </div>
+              <v-divider v-if="index < cartItems.length - 1" class="my-4"></v-divider>
             </div>
-            <v-divider v-if="cartItems.length > 0"></v-divider>
           </v-card-text>
         </v-card>
       </v-col>
 
       <v-col cols="12" md="4">
-        <v-card>
-          <v-card-title class="text-h5 py-4">Sepet Toplamı</v-card-title>
+        <v-card class="rounded-xl elevation-3 border" variant="elevated">
+          <v-card-title class="text-h6 py-4 px-6 bg-grey-lighten-4 rounded-t-xl font-weight-medium">
+            Sipariş Özeti
+          </v-card-title>
           
-          <v-card-text>
-            <v-expansion-panels variant="accordion">
-              <v-expansion-panel>
-                <v-expansion-panel-title>Kupon Ekle</v-expansion-panel-title>
-                <v-expansion-panel-text>
-                  <v-text-field
-                    label="Kupon Kodu"
-                    variant="outlined"
-                    density="comfortable"
-                    hide-details
-                    class="mb-2"
-                    v-model="couponCode"
-                  ></v-text-field>
-                  <v-btn color="primary" block @click="applyCoupon">Uygula</v-btn>
-                </v-expansion-panel-text>
-              </v-expansion-panel>
-            </v-expansion-panels>
-
-            <v-list>
-              <v-list-item>
+          <v-card-text class="px-6 py-4">
+            <v-list class="pa-0">
+              <v-list-item class="px-0">
                 <div class="d-flex justify-space-between align-center py-2">
-                  <div class="text-subtitle-1">Ara Toplam</div>
-                  <div class="text-subtitle-1 font-weight-bold">₺{{ subtotal.toFixed(2) }}</div>
+                  <div class="text-subtitle-2 text-medium-emphasis">Ara Toplam</div>
+                  <div class="text-subtitle-1 font-weight-medium">₺{{ subtotal.toFixed(2) }}</div>
                 </div>
               </v-list-item>
-              <v-divider></v-divider>
-              <v-list-item>
+              <v-list-item class="px-0">
                 <div class="d-flex justify-space-between align-center py-2">
+                  <div class="text-subtitle-2 text-medium-emphasis">Kargo</div>
+                  <div class="text-subtitle-1 font-weight-medium">Ücretsiz</div>
+                </div>
+              </v-list-item>
+              <v-divider class="my-2"></v-divider>
+              <v-list-item class="px-0">
+                <div class="d-flex justify-space-between align-center py-3">
                   <div class="text-h6 font-weight-bold">Toplam</div>
-                  <div class="text-h6 font-weight-bold">₺{{ total.toFixed(2) }}</div>
+                  <div class="text-h6 font-weight-bold text-primary">₺{{ total.toFixed(2) }}</div>
                 </div>
               </v-list-item>
             </v-list>
@@ -129,13 +129,20 @@
               color="success" 
               size="large" 
               block
-              class="mt-4"
+              class="mt-6 py-3 text-subtitle-1 rounded-lg"
               :loading="processingOrder"
               :disabled="cartItems.length === 0 || processingOrder"
               @click="checkout"
+              elevation="1"
             >
+              <v-icon class="me-2">mdi-check-circle</v-icon>
               Siparişi Tamamla
             </v-btn>
+            
+            <div class="d-flex align-center justify-center mt-4 gap-2">
+              <v-icon size="small" color="grey-darken-1">mdi-shield-lock</v-icon>
+              <span class="text-caption text-grey-darken-1">Güvenli Ödeme</span>
+            </div>
           </v-card-text>
         </v-card>
       </v-col>
@@ -171,7 +178,6 @@ interface OrderRequest {
 
 const loading = ref(true);
 const cartItems = ref<CartItem[]>([]);
-const couponCode = ref('');
 const processingOrder = ref(false);
 
 const fetchProducts = async () => {
@@ -222,12 +228,6 @@ const removeItem = (itemToRemove: CartItem) => {
   cartItems.value = cartItems.value.filter(item => item.id !== itemToRemove.id);
 };
 
-const applyCoupon = () => {
-  // Kupon uygulama işlemi ileride API entegrasyonu ile eklenecek
-  alert(`Kupon kodu uygulanıyor: ${couponCode.value}`);
-  couponCode.value = '';
-};
-
 const checkout = async () => {
   if (cartItems.value.length === 0) {
     alert('Sepetinizde ürün bulunmamaktadır.');
@@ -269,3 +269,71 @@ onMounted(() => {
   fetchProducts();
 });
 </script>
+
+<style scoped>
+.hover-elevation {
+  transition: all 0.2s ease-in-out;
+  padding: 16px;
+  border: 1px solid transparent;
+}
+
+.hover-elevation:hover {
+  background-color: rgba(0, 0, 0, 0.01);
+  border-color: rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.transition-all {
+  transition: all 0.2s ease;
+}
+
+.border {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.quantity-btn {
+  transition: all 0.2s ease;
+  min-width: 36px;
+  min-height: 36px;
+}
+
+.quantity-btn:hover:not(:disabled) {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.product-image-container {
+  min-width: 90px;
+  max-width: 90px;
+}
+
+.img-square-wrapper {
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+@media (max-width: 600px) {
+  .hover-elevation {
+    padding: 12px 8px;
+  }
+  
+  .quantity-btn {
+    min-width: 40px;
+    min-height: 40px;
+  }
+  
+  .product-image-container {
+    min-width: 100%;
+    max-width: 100%;
+  }
+  
+  .img-square-wrapper {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto;
+  }
+}
+</style>
