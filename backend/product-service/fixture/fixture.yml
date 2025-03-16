@@ -1,0 +1,20 @@
+- model: Product
+  rows:
+    - name: 'Product 1'
+      price: 100
+      created_at: '{{ now }}'
+      updated_at: '{{ now }}'
+      stock: 10
+ 
+    - name: 'Product 2'
+      price: 200
+      created_at: '{{ now }}'
+      updated_at: '{{ now }}' 
+      stock: 20
+ 
+    - name: 'Product 3'
+      price: 300
+      created_at: '{{ now }}'
+      updated_at: '{{ now }}'
+      stock: 30
+      

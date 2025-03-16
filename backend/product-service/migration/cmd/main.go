@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 
+	"github.com/osmanunal/commerce-oms/product-service/fixture"
 	"github.com/osmanunal/commerce-oms/product-service/migration"
 	_ "github.com/osmanunal/commerce-oms/product-service/migration/migrations"
 
@@ -48,6 +49,13 @@ var commands = []*cli.Command{
 					return migration.Status(context.Background())
 				},
 			},
+		},
+	},
+	{
+		Name:  "seed",
+		Usage: "insert fixture data",
+		Action: func(c *cli.Context) error {
+			return fixture.InsertDefaultData()
 		},
 	},
 }

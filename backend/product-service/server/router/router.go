@@ -35,5 +35,6 @@ func Setup(app *fiber.App, db *bun.DB, cfg *config.Config) {
 
 	products := api.Group("/product")
 	products.Post("/", productHandler.Create)
-	products.Get("/:id", productHandler.Get)
+	products.Get("/", productHandler.GetAll)
+	products.Get("/:id", productHandler.GetByID)
 }

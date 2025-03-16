@@ -18,6 +18,22 @@ func NewProductHandler(productService service.ProductService) *ProductHandler {
 	}
 }
 
+func (h *ProductHandler) GetAll(c *fiber.Ctx) error {
+	products, err := h.productService.GetAll(c.Context())
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+
+	var productResponses []viewmodel.ProductResponse
+	for _, product := range products {
+		productResponse := viewmodel.ProductResponse{}
+		productResponse.FromModel(product)
+		productResponses = append(productResponses, productResponse)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"products": productResponses})
+}
+
 func (h *ProductHandler) Create(c *fiber.Ctx) error {
 	productRequest := viewmodel.ProductRequest{}
 	if err := c.BodyParser(&productRequest); err != nil {
@@ -39,9 +55,9 @@ func (h *ProductHandler) Create(c *fiber.Ctx) error {
 	})
 }
 
-func (h *ProductHandler) Get(c *fiber.Ctx) error {
+func (h *ProductHandler) GetByID(c *fiber.Ctx) error {
 	productID := c.Params("id")
-	product, err := h.productService.Get(c.Context(), productID)
+	product, err := h.productService.GetByID(c.Context(), productID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "ürünün alınması sırasında bir hata oluştu"})
 	}

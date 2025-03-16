@@ -21,17 +21,21 @@ func NewProductService(productRepo port.ProductRepository, orderBroker port.Orde
 	}
 }
 
+func (s *ProductService) GetAll(ctx context.Context) ([]model.Product, error) {
+	return s.productRepo.GetAll(ctx)
+}
+
 func (s *ProductService) Create(ctx context.Context, product *model.Product) error {
 	return s.productRepo.Create(ctx, product)
 }
 
-func (s *ProductService) Get(ctx context.Context, productID string) (*model.Product, error) {
-	return s.productRepo.Get(ctx, productID)
+func (s *ProductService) GetByID(ctx context.Context, productID string) (*model.Product, error) {
+	return s.productRepo.GetByID(ctx, productID)
 }
 
 func (s *ProductService) StartConsuming(ctx context.Context) error {
 	return s.orderBroker.ConsumeStockDecrease(ctx, func(message port.StockDecreaseMessage) error {
-		product, err := s.productRepo.Get(ctx, message.ProductID)
+		product, err := s.productRepo.GetByID(ctx, message.ProductID)
 		if err != nil {
 			return err
 		}

@@ -20,6 +20,20 @@ func NewProductRepository(db *bun.DB) port.ProductRepository {
 	}
 }
 
+func (r *ProductRepository) GetAll(ctx context.Context) ([]model.Product, error) {
+	var products []model.Product
+
+	err := r.db.NewSelect().
+		Model(&products).
+		Scan(ctx)
+
+	if err != nil {
+		return nil, errors.New("ürünlerin alınması sırasında bir hata oluştu")
+	}
+
+	return products, nil
+}
+
 func (r *ProductRepository) Create(ctx context.Context, product *model.Product) error {
 	err := r.db.RunInTx(ctx, nil, func(ctx context.Context, tx bun.Tx) error {
 		_, err := tx.NewInsert().
@@ -43,7 +57,7 @@ func (r *ProductRepository) Create(ctx context.Context, product *model.Product) 
 	return err
 }
 
-func (r *ProductRepository) Get(ctx context.Context, productID string) (*model.Product, error) {
+func (r *ProductRepository) GetByID(ctx context.Context, productID string) (*model.Product, error) {
 	var product model.Product
 
 	err := r.db.NewSelect().
