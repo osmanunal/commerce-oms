@@ -1,0 +1,24 @@
+dbConfig:
+  host: "localhost"
+  name: "order-service"
+  user: "order-service"
+  password: "order-service"
+  port: 6442
+
+jwtSecret: "harikulade-gizli-key"
+
+serverConfig:
+  port: 3000
+  readTimeout: 10
+  writeTimeout: 10
+  idleTimeout: 5
+
+rabbitMQConfig:
+  host: "localhost"
+  port: 5672
+  user: "guest"
+  password: "guest"
+  stockDecreaseExchange: "product_stock"
+  stockDecreaseQueue: "stock_decrease"
+  stockStatusExchange: "order_status"
+  stockStatusQueue: "stock_status"
