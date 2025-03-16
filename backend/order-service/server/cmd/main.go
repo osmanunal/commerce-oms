@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/osmanunal/commerce-oms/order-service/internal/broker"
 	"log"
 	"os"
 	"os/signal"
@@ -33,6 +34,11 @@ func main() {
 	app.Use(cors.New())
 	app.Use(recover.New())
 	app.Use(logger.New())
+
+	productBroker, err := broker.NewRabbitMQProductBroker(&cfg.RabbitMQConfig)
+	if err != nil {
+		log.Fatalf("RabbitMQ broker oluşturma hatası: %v", err)
+	}
 
 	router.Setup(app, db, cfg)
 

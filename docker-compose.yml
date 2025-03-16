@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # PostgreSQL veritabanları
   order-db:
     image: postgres:15
     container_name: order-db
@@ -30,7 +29,6 @@ services:
     networks:
       - commerce-network
 
-  # RabbitMQ mesaj kuyruğu
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq

@@ -37,21 +37,18 @@ type amqpConsumer struct {
 }
 
 func NewRabbitMQOrderBroker(cfg *config.RabbitMQConfig) (*RabbitMQOrderBroker, error) {
-	// RabbitMQ bağlantısı kur
 	connStr := fmt.Sprintf("amqp://%s:%s@%s:%d/", cfg.User, cfg.Password, cfg.Host, cfg.Port)
 	conn, err := amqp.Dial(connStr)
 	if err != nil {
 		return nil, fmt.Errorf("rabbitmq bağlantı hatası: %w", err)
 	}
 
-	// Publisher kanalı aç
 	pubCh, err := conn.Channel()
 	if err != nil {
 		conn.Close()
 		return nil, fmt.Errorf("rabbitmq publisher kanal hatası: %w", err)
 	}
 
-	// Consumer kanalı aç
 	conCh, err := conn.Channel()
 	if err != nil {
 		pubCh.Close()
@@ -80,14 +77,12 @@ func NewRabbitMQOrderBroker(cfg *config.RabbitMQConfig) (*RabbitMQOrderBroker, e
 		},
 	}
 
-	// Publisher exchange ve queue tanımla
 	err = broker.setupPublisher()
 	if err != nil {
 		broker.Close()
 		return nil, err
 	}
 
-	// Consumer exchange ve queue tanımla
 	err = broker.setupConsumer()
 	if err != nil {
 		broker.Close()
